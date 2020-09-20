@@ -12,6 +12,7 @@ class User(AbstractUser):
     name = CharField(_("Name of User"), blank=True, max_length=255)
     id = UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    
     def get_absolute_url(self):
         """Get url for user's detail view.
 
@@ -19,4 +20,5 @@ class User(AbstractUser):
             str: URL for user detail.
 
         """
-        return reverse("users:detail", kwargs={"username": self.username})
+        return reverse("profiles:detail", kwargs={"slug": self.username})
+    

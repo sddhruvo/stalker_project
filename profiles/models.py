@@ -1,6 +1,7 @@
 import uuid
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django_countries.fields import CountryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -33,6 +34,18 @@ class Profile(models.Model):
         self.id = self.user.id
         self.slug = slugify(self.user.username)
         super().save(*args, **kwargs)
+
+    def get_all_friends(self):
+        return self.friends.all()
+
+    def get_absolute_url(self):
+        """Get url for profile's detail view.
+
+        Returns:
+            str: URL for profile detail.
+
+        """
+        return reverse("profiles:detail", kwargs={"slug": self.slug})
 
 
 # signal to create profile for user created

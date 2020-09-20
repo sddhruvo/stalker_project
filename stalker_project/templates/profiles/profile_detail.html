@@ -9,9 +9,20 @@
   <div class="row">
     <div class="col-sm-12">
 
-      <h2>{{ object.slug }}</h2>
       {% if object.name %}
-        <p>{{ object.name }}</p>
+        <h2>{{ object.name }}</h2>
+      {% else %}
+      <h2>{{ object.slug }}</h2>
+      {% endif %}
+      
+      {% if object.id != request.user.id %}
+        {% if frnd_btn_state == 'ACCEPTED' %}
+          <a class="btn btn-danger" href="{% url 'relationships:remove_frnd' object.id %}" role="button">Remove</a>
+        {% elif frnd_btn_state == 'NONE'  %}
+          <a class="btn btn-primary" href="{% url 'relationships:send_freq' object.id %}" role="button">Send Request</a>  
+        {% elif frnd_btn_state == 'SEND'  %}
+        <a class="btn btn-secondary" href="#" role="button">Request Sent</a>
+        {% endif %}
       {% endif %}
     </div>
   </div>
@@ -27,6 +38,25 @@
   </div>
 
 </div>
+
+<div class="col-sm-12">
+  <h3>Friend list: </h3>
+  {% for friend in object.get_all_friends %}
+    <li><a href="{{ friend.get_absolute_url }}">{{ friend }}</a></li>
+  {% endfor %}
+</div>
+{% if frnd_req_rcvd %}
+  <div class="col-sm-12">
+    <h3>Friend Request:</h3>
+    {% for item in frnd_req_rcvd %}
+      <li class="mb-2">
+        <a href="{{ item.sender.get_absolute_url }}">{{ item.sender.name }}</a>
+        <a class="btn btn-primary btn-sm " href="{% url 'relationships:accept_frnd' item.sender.id %}" role="button">Accept</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'relationships:cancel_frnd' item.sender.id %}" role="button">Reject</a>
+      </li>
+    {% endfor%}
+  </div>
+{%endif%}
 <!-- End Action buttons -->
 {% endif %}
 

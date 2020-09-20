@@ -1,6 +1,6 @@
 from django.urls import path
 
-from stalker_project.profiles.views import (
+from profiles.views import (
     profile_detail_view,
     profile_redirect_view,
     profile_update_view,

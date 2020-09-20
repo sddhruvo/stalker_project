@@ -13,7 +13,8 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("profiles/", include("stalker_project.profiles.urls", namespace="profiles")),
+    path("profiles/", include("profiles.urls", namespace="profiles")),
+    path("relationships/", include("relationships.urls", namespace="relationships")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
