@@ -21,7 +21,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, related_name='profile')
     gender = models.CharField(max_length=6, choices=GENDER, default='NONE')
     country = CountryField()
-    avatar = models.ImageField(default='avatar.png', upload_to='avatars/')
+    avatar = models.ImageField(default='avatars/avatar.png', upload_to='media/avatars/')
     friends = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True, related_name='friends')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

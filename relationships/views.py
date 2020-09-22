@@ -16,6 +16,15 @@ def send_friend_request(request, id):
         receiver=receiver_profile, status='SEND')
     return redirect('profiles:detail', slug=receiver_profile.slug)
 
+def cancel_sent_friend_request(request, id):
+	sender_profile = get_object_or_404(Profile, id=request.user.id)
+	receiver_profile = get_object_or_404(Profile, id=id)
+	Relationship.objects.relation_delete(
+		sender=sender_profile,
+		receiver=receiver_profile)
+
+	return redirect('profiles:detail', slug=receiver_profile.slug)
+
 
 def remove_friend(request, id):
     sender_profile = get_object_or_404(Profile, id=request.user.id)

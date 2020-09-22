@@ -4,63 +4,99 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-12">
 
-  <div class="row">
-    <div class="col-sm-12">
-
-      {% if object.name %}
-        <h2>{{ object.name }}</h2>
-      {% else %}
-      <h2>{{ object.slug }}</h2>
-      {% endif %}
-      
-      {% if object.id != request.user.id %}
-        {% if frnd_btn_state == 'ACCEPTED' %}
-          <a class="btn btn-danger" href="{% url 'relationships:remove_frnd' object.id %}" role="button">Remove</a>
-        {% elif frnd_btn_state == 'NONE'  %}
-          <a class="btn btn-primary" href="{% url 'relationships:send_freq' object.id %}" role="button">Send Request</a>  
-        {% elif frnd_btn_state == 'SEND'  %}
-        <a class="btn btn-secondary" href="#" role="button">Request Sent</a>
-        {% endif %}
+  <div class="grid grid-rows-3 grid-flow-col gap-4 mx-10 sm:mx-14 sm:grid-rows-3 sm:grid-cols-4 sm:gap-8">
+    <!-- profile details -->
+    <div class="col-span-2 sm:row-span-3 sm:col-span-1">
+      <div>
+        <div class="row-span-2 ">
+          <h1 class="text-3xl bg-cover">{{object.name}}</h1>
+          <img class="bg-cover" src={{ object.avatar.url }} alt="profile pic">
+        </div>
+        <div>
+          <table class="ui table">
+            <tbody>
+                <tr>
+                    <td>Name:</td>
+                    <td>{{object.name}}</td>
+                </tr>
+                <tr>
+                    <td>bio:</td>
+                    <td>{{object.bio}}</td>
+                </tr>
+                <tr>
+                    <td>country:</td>
+                    <td>{{object.get_friends_no}}</td>
+                </tr>
+                <tr>
+                    <td>gender:</td>
+                    <td>{{object.gender}}</td>
+                </tr>
+                <tr>
+                    <td>favourite:</td>
+                    <td>{{object.favourite}}</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <!-- info update section -->
+    <div class="col-span-3 sm:row-span-1 sm:col-span-3 pt-2 sm:flex sm:items-end sm:flex-col">
+      <div class="">
+        <div class="">
+          
+          {% if object.id != request.user.id %}
+            {% if frnd_btn_state == 'ACCEPTED' %}
+              <a class="btn-red" href="{% url 'relationships:remove_frnd' object.id %}" role="button">Remove</a>
+            {% elif frnd_btn_state == 'NONE'  %}
+              <a class="btn-green" href="{% url 'relationships:send_freq' object.id %}" role="button">Send Request</a>  
+            {% elif frnd_btn_state == 'SEND'  %}
+            <a class="btn-yellow" href="{% url 'relationships:cancel_sent_freq' object.id %}" role="button">Request Sent</a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    
+      {% if object.id == request.user.id %}
+      <!-- Action buttons -->
+      <div class="">
+    
+        <div class="">
+          <a class="btn-green" href="{% url 'profiles:update' %}" role="button">My Info</a>
+          <a class="btn" href="{% url 'account_email' %}" role="button">E-Mail</a>
+          <!-- Your Stuff: Custom user template urls -->
+        </div>
+    
+      </div>
+    
+      <div class="">
+        <h3>Friend list: </h3>
+        {% for friend in object.get_all_friends %}
+          <li><a href="{{ friend.get_absolute_url }}">{{ friend }}</a></li>
+        {% endfor %}
+      </div>
+      {% if frnd_req_rcvd %}
+        <div class="">
+          <h3>Friend Request:</h3>
+          {% for item in frnd_req_rcvd %}
+            <li class="mb-2">
+              <a href="{{ item.sender.get_absolute_url }}">{{ item.sender.name }}</a>
+              <a class="btn" href="{% url 'relationships:accept_frnd' item.sender.id %}" role="button">Accept</a>
+              <a class="btn" href="{% url 'relationships:cancel_frnd' item.sender.id %}" role="button">Reject</a>
+            </li>
+          {% endfor%}
+        </div>
+      {%endif%}
+      <!-- End Action buttons -->
       {% endif %}
     </div>
+    <div class="col-span-3 bg-gray-200 sm:row-span-2 sm:col-span-3">3</div>
   </div>
-
-{% if object.id == request.user.id %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'profiles:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
+  
 
 </div>
 
-<div class="col-sm-12">
-  <h3>Friend list: </h3>
-  {% for friend in object.get_all_friends %}
-    <li><a href="{{ friend.get_absolute_url }}">{{ friend }}</a></li>
-  {% endfor %}
-</div>
-{% if frnd_req_rcvd %}
-  <div class="col-sm-12">
-    <h3>Friend Request:</h3>
-    {% for item in frnd_req_rcvd %}
-      <li class="mb-2">
-        <a href="{{ item.sender.get_absolute_url }}">{{ item.sender.name }}</a>
-        <a class="btn btn-primary btn-sm " href="{% url 'relationships:accept_frnd' item.sender.id %}" role="button">Accept</a>
-        <a class="btn btn-danger btn-sm" href="{% url 'relationships:cancel_frnd' item.sender.id %}" role="button">Reject</a>
-      </li>
-    {% endfor%}
-  </div>
-{%endif%}
-<!-- End Action buttons -->
-{% endif %}
-
-
-</div>
 {% endblock content %}
 
