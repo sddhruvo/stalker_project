@@ -1,0 +1,66 @@
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <!--Custom css-->
+    <link rel="stylesheet" type="text/css" href={% static "style.css" %}>
+    <!-- semantic UI -->
+    <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha512-dqw6X88iGgZlTsONxZK9ePmJEFrmHwpuMrsUChjAw1mRUhUITE5QU9pkcSox+ynfLhL15Sv2al5A0LVyDCmtUw==" crossorigin="anonymous"></script>
+  
+<div class="st_btn ui button">
+    <i class="wrench icon"></i>
+</div>
+<div class="ui flowing popup top left transition hidden">
+<div class="ui two column divided center aligned grid">
+    <div class="column">
+        <h4 class="ui header">Edit</h4>
+        <div class="ui button">
+            <a href="{% url 'posts:comment_update' c.pk %}">Edit</a>
+        </div>
+    </div>
+    <div class="column">
+        <h4 class="ui header">Delete</h4>
+        <div class="ui button">
+            <a href="{% url 'posts:comment_delete' c.pk %}">Delete</a>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<div class="st_btn ui icon pointing dropdown button ">
+    <i class="wrench icon"></i>
+</div>
+<div class="dropdown menu">
+    <div class="header">
+        <a href="{% url 'posts:post_update' obj.pk %}"><button class="ui button bwhite-lg ">Edit</button></a>
+    </div>
+    <div class="item">
+        <a href="{% url 'posts:comment_delete' c.pk %}"><button class="ui button bwhite-lg ">Delete</button></a>                                                                
+    </div>
+</div>
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.hide {
+  display: none;
+}
+    
+.myDIV:hover + .hide {
+  display: block;
+  color: red;
+}
+</style>
+</head>
+<body>
+
+<h2>Display an Element on Hover</h2>
+
+
+<button class="myDIV button">Hover on me.</button>
+<p class="hide">I div above.</p>
+<div class="myDIV">Hover over me.</div>
+<div class="hide">I am shown when someone hovers over the div above.
+
+</body>
+</html>

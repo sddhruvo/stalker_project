@@ -6,7 +6,7 @@
     @apply  flex h-20 bg-gray-800;
 }
 .navlink{
-    @apply border-r-2 w-1/3 inline-block h-full;
+    @apply border-r-2 w-1/3 inline-block h-full border border-teal-500 border-t-0 border-l-0 border-b-2;
 }
 .navlink:hover{
     @apply bg-gray-900 text-teal-500;
@@ -46,7 +46,7 @@ svg:hover{
 }
 @screen sm{
     .navbar{
-        @apply h-12
+        @apply h-16
     }
 }
 

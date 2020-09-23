@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}main page{% endblock title %}
+
+{% block content %}
+<style>
+    .card{
+        max-width: 95%;
+    }
+    @media only screen and (min-width: 640px){
+        .card{
+            width: 480px;
+        }
+    }
+</style>
+<div class="ui grid container"><!--
+    <div class="ui two column centered grid">
+        <div class="column card ui">
+            <div class="">
+                <div class="ui segment">
+                    
+                    <form action="" method="POST" class='ui form' enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{post_form|crispy }}
+                        <button type='submit' name="submit_p_form" class="btn-green">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="sixteen wide column centered row">
+            {% for obj in queryset %}
+            
+                <div class="column raised card ui mb-15">
+                    <div class="content">
+                        <div class="right floated meta">
+                            {% ifequal request.user obj.author.user %}
+                                <div class="st_btn ui icon pointing dropdown button ">
+                                    <i class="wrench icon"></i>
+                                </div>
+                                <div class="dropdown menu">
+                                    <div class="header">
+                                        <a href="{% url 'posts:post_update' obj.pk %}"><button class="ui button bwhite-lg ">Edit</button></a>
+                                    </div>
+                                    <div class="item">
+                                        <a href="{% url 'posts:post_delete' obj.pk %}"><button class="ui button bwhite-lg ">Delete</button></a>                                                                
+                                    </div>
+                                </div>
+                            {% endifequal %}
+                            
+                        </div>
+                        <img class="ui avatar image" src={{obj.author.avatar.url}}> 
+                        {{ obj.author.user }} - {{ obj.created|timesince}} ago
+                    </div>
+                    <div class="content">
+                        <p> {{ obj.content }} </p>
+                    </div>
+                    <div class="image">
+                        {% if obj.image %}
+                            <img src={{obj.image.url}} class="img">
+                        {% endif %}
+                    </div>
+                    <div class="ui secondary menu justify">
+                        <div class="item">
+                            
+                                <form action="#" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="post_id" value={{obj.id}}>
+                                    {% if profile not in obj.liked.all %}
+                                        <button type="submit" class="ui bwhite-sm button"><i class="large heart outline like icon"></i>
+                                        </button>
+                                        <span> {{obj.num_likes}} likes</span>
+                                    {% else %}
+                                        <button type="submit" class="ui bwhite-sm button"><i class="large heart teal icon"></i>
+                                        </button>
+                                        <span> {{obj.num_likes}} like{{ obj.num_likes|pluralize }}</span>
+                                    {% endif %}
+                                </form>
+                            
+                        </div>
+                        <div class="item right floated">
+                            <button class="ui bwhite-sm button">
+                                {%if obj.num_comments > 0%}
+                                    <i class="large teal comment icon"></i>
+                                {% else %}
+                                    <i class="large teal comment outline icon"></i>
+                                {% endif %}
+                            </button>
+                            <span> {{ obj.num_comments }} comment{{ obj.num_comments|pluralize }}</span>
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        
+                        {% if obj.num_comments > 0 %}
+                            <button class="cmt_btn ui button bwhite-lg">
+                                <i class="dropdown icon"></i>Comments
+                            </button>
+                        {% endif %}
+                        <div class="comment-box ui styled accordion">
+                            {% if obj.comment_set.all %}
+                                {% for c in obj.comment_set.all %}
+                                
+                                    <div class="comment">
+                                        <div class="right floated meta">
+                                            {% if request.user.id == c.user.id %}
+                                                <button class="ui button p-2 large">
+                                                    <a href="{% url 'posts:comment_update' c.pk %}">
+                                                        <i class="edit icon gray"></i>
+                                                        
+                                                    </a>
+                                                    <div class="hide">edit</div>
+                                                </button>
+                                                <button class="ui button p-2 large">
+                                                    <a href="{% url 'posts:comment_delete' c.pk %}">
+                                                        <i class="trash icon gray"></i>
+                                                        
+                                                    </a>
+                                                    <div class="hide">delete</div>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                        <img class="ui avatar image" src={{c.user.avatar.url}}>
+                                        <span class="author">{{ c.user }}</span>
+                                        <div class='mt-8 comment-text'>{{ c.body }}</div>
+                                    </div>
+                                
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+        
+                        <form action="" method="POST"class='ui fluid form'>
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id" value={{obj.id}}>
+                            {{ comment_form|crispy }}
+                            <button type="submit" name="submit_c_form" class="btn-green">Send</button>
+                        </form>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div> 
+    </div> -->
+    <div class="container pt-10 md:ml-20">
+        <div class="grid sm:grid-cols-3 gap-12 mx-10 mt-12">
+          <div class="sm:col-span-1 card">
+            <form action="" method="POST" class='ui form' enctype="multipart/form-data">
+                {% csrf_token %}
+                {{post_form|crispy }}
+                <button type='submit' name="submit_p_form" class="btn-green">Send</button>
+            </form>
+          </div>
+          {% for obj in queryset %}
+            <div class="sm:col-span-2 grid justify-center">
+                <div class="sm:ml-10 card border border-teal-500 py-6">
+                    <div class="grid grid-cols-6 justify-self-stretch">
+                        <img class="mx-4 col-span-1 inline-block h-20 w-20 rounded-full text-white shadow-solid flex-col" src={{obj.author.avatar.url}} alt="pp">
+                        <h3 class="mx-8 col-span-4 grid items-center col-span-1">{{ obj.author.user.profile.name }}</h3>
+                        <small class="mr-6 col-span-1 grid items-center">{{obj.created|timesince}}</small>    
+                    </div>
+                    {% if obj.image %}
+                        <img src={{obj.image.url}} class=" h-auto">
+                    {% endif %}
+                    <div class="post"><p>post content</p></div>
+                    <div class="like-comment">like comment</div>
+                    <div class="comment-expand">all comment</div>
+                </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    
+    
+</div>
+{% endblock content %}
+
+{% block scripts %} 
+    <script>
+        $( document ).ready(function() {
+            let display = false
+            
+            $(".cmt_btn").click(function () {
+                if (display===false) {
+                    $(this).next(".comment-box").show("slow");
+                    display=true
+                } else {
+                    $(this).next(".comment-box").hide("slow");
+                    display=false
+                }  
+            });
+            $(".st_btn").click(function () {
+                if (display===false) {
+                    $(this).next(".menu").show("slow");
+                    display=true
+                } else {
+                    $(this).next(".menu").hide("slow");
+                    display=false
+                }  
+            });
+            $(".nv_btn").click(function () {
+                if (display===false) {
+                    $(this).next(".nv.menu").show("slow");
+                    display=true
+                } else {
+                    $(this).next(".nv.menu").hide("slow");
+                    display=false
+                }  
+            });
+             
+        });
+        
+    </script>
+{% endblock scripts %}

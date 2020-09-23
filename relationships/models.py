@@ -73,13 +73,11 @@ def post_save_add_to_friends(sender, instance, created, **kwargs):
     receiver_ = instance.receiver
     if sender_ != receiver_:
         if instance.status == 'ACCEPTED':
-            print('postsaveaccept')
             sender_.friends.add(receiver_.user)
             receiver_.friends.add(sender_.user)
             sender_.save()
             receiver_.save()
         elif instance.status == 'NONE':
-            print('postsavedelete')
             sender_.friends.remove(receiver_.user)
             receiver_.friends.remove(sender_.user)
             instance.delete()

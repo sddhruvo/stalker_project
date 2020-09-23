@@ -1,0 +1,41 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+delete post
+{% endblock title %}
+
+{% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'warning' in message.tags %}
+                <div class='ui negative message'>
+                    <div class="header">
+                        {{message}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if not messages %}
+        <div class="ui segment">
+            <h3>Delete post?</h3>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <p>Are you sure you want to delete the post?</p>
+                <a class="ui button teal mt-5 " href="{% url 'posts:main_post_list'%}">
+                    <i class="backward icon"></i>
+                    Cancel
+                </a>
+                <button type='submit' class="ui button negative mt-5 ">
+                    <i class="trash alternate icon"></i>
+                    Delete
+                </button>
+            </form>
+        </div>
+    {% endif %}
+    
+
+{% endblock content %}
