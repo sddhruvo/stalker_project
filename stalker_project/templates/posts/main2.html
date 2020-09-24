@@ -5,57 +5,132 @@
 
 {% block content %}
 
-<div class="ui grid">
-    <div class="row">
-        <div class="eleven wide column">
-            {% for obj in queryset%}
-            <div class="ui fluid card">
-                <div class="content">
-                    {{ obj.content }}
-                </div>
-                <div class="content">
-                    <form action="{% url 'posts:like_post_list'%}" method="post">
+<<!--
+    <div class="ui two column centered grid">
+        <div class="column card ui">
+            <div class="">
+                <div class="ui segment">
+                    
+                    <form action="" method="POST" class='ui form' enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="hidden" name="post_id" value="{{ obj.id }}">
-                        <button type="submit" class="ui primary button">
-
-                            {% if profile not in obj.liked.all %}
-                                <i class="thumbs up icon"></i>
-                            {% else %}
-                                <i class="thumbs down icon"></i>
-                            {% endif %}
-
-                        </button>
-                        &nbsp;{{obj.num_likes}}
-                    </form>
-                </div>
-                <div class="content">
-                    {% if obj.comment_set.all %}
-                        {% for comment in obj.comment_set.all%}
-                            <p>{{ comment.body }}</p>
-                        {% endfor %}
-                    {%endif%}
-                </div>
-                <div class="content">
-                    <form action="" method="post" class="ui form">
-                        {% csrf_token %}
-                        <input type="hidden" name="post_id" value='{{obj.id}}'>
-                        {{comment_form}}
-                        <button type="submit" class="ui primary button" name='submit_c_form'>Comment</button>
+                        {{post_form|crispy }}
+                        <button type='submit' name="submit_p_form" class="btn-green">Send</button>
                     </form>
                 </div>
             </div>
-            {% endfor%}
         </div>
-        <div class="five wide column">
-            <form action="" method="post" class="ui form" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{post_form.as_p}}
-                <button type="submit" class="ui button positive" name="submit_p_form">Post</button>
-            </form>
-        </div>
-    </div>
-</div>
+        <div class="sixteen wide column centered row">
+            {% for obj in queryset %}
+            
+                <div class="column raised card ui mb-15">
+                    <div class="content">
+                        <div class="right floated meta">
+                            {% ifequal request.user obj.author.user %}
+                                <div class="st_btn ui icon pointing dropdown button ">
+                                    <i class="wrench icon"></i>
+                                </div>
+                                <div class="dropdown menu">
+                                    <div class="header">
+                                        <a href="{% url 'posts:post_update' obj.pk %}"><button class="ui button bwhite-lg ">Edit</button></a>
+                                    </div>
+                                    <div class="item">
+                                        <a href="{% url 'posts:post_delete' obj.pk %}"><button class="ui button bwhite-lg ">Delete</button></a>                                                                
+                                    </div>
+                                </div>
+                            {% endifequal %}
+                            
+                        </div>
+                        <img class="ui avatar image" src={{obj.author.avatar.url}}> 
+                        {{ obj.author.user }} - {{ obj.created|timesince}} ago
+                    </div>
+                    <div class="content">
+                        <p> {{ obj.content }} </p>
+                    </div>
+                    <div class="image">
+                        {% if obj.image %}
+                            <img src={{obj.image.url}} class="img">
+                        {% endif %}
+                    </div>
+                    <div class="ui secondary menu justify">
+                        <div class="item">
+                            
+                                <form action="#" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="post_id" value={{obj.id}}>
+                                    {% if profile not in obj.liked.all %}
+                                        <button type="submit" class="ui bwhite-sm button"><i class="large heart outline like icon"></i>
+                                        </button>
+                                        <span> {{obj.num_likes}} likes</span>
+                                    {% else %}
+                                        <button type="submit" class="ui bwhite-sm button"><i class="large heart teal icon"></i>
+                                        </button>
+                                        <span> {{obj.num_likes}} like{{ obj.num_likes|pluralize }}</span>
+                                    {% endif %}
+                                </form>
+                            
+                        </div>
+                        <div class="item right floated">
+                            <button class="ui bwhite-sm button">
+                                {%if obj.num_comments > 0%}
+                                    <i class="large teal comment icon"></i>
+                                {% else %}
+                                    <i class="large teal comment outline icon"></i>
+                                {% endif %}
+                            </button>
+                            <span> {{ obj.num_comments }} comment{{ obj.num_comments|pluralize }}</span>
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        
+                        {% if obj.num_comments > 0 %}
+                            <button class="cmt_btn ui button bwhite-lg">
+                                <i class="dropdown icon"></i>Comments
+                            </button>
+                        {% endif %}
+                        <div class="comment-box ui styled accordion">
+                            {% if obj.comment_posted.all %}
+                                {% for c in obj.comment_posted.all %}
+                                
+                                    <div class="comment">
+                                        <div class="right floated meta">
+                                            {% if request.user.id == c.user.id %}
+                                                <button class="ui button p-2 large">
+                                                    <a href="{% url 'posts:comment_update' c.pk %}">
+                                                        <i class="edit icon gray"></i>
+                                                        
+                                                    </a>
+                                                    <div class="hide">edit</div>
+                                                </button>
+                                                <button class="ui button p-2 large">
+                                                    <a href="{% url 'posts:comment_delete' c.pk %}">
+                                                        <i class="trash icon gray"></i>
+                                                        
+                                                    </a>
+                                                    <div class="hide">delete</div>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                        <img class="ui avatar image" src={{c.user.avatar.url}}>
+                                        <span class="author">{{ c.user }}</span>
+                                        <div class='mt-8 comment-text'>{{ c.body }}</div>
+                                    </div>
+                                
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+        
+                        <form action="" method="POST"class='ui fluid form'>
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id" value={{obj.id}}>
+                            {{ comment_form|crispy }}
+                            <button type="submit" name="submit_c_form" class="btn-green">Send</button>
+                        </form>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div> 
+    </div> -->
 
 
 

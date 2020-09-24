@@ -5,6 +5,11 @@ module.exports = {
   },
   purge: [],
   theme: {
+    boxShadow: {
+      mdgreen: '0 10px 15px -3px rgba(56, 178, 172, 0.7), 0 4px 6px -2px rgba(56, 178, 172, 0.4)',
+      mdred: '0 10px 15px -3px rgba(245, 101, 101, 0.7), 0 4px 6px -2px rgba(245, 101, 101, 0.4)',
+      mdyellow: '0 10px 15px -3px rgba(236, 201, 75, 0.7), 0 4px 6px -2px rgba(236, 201, 75, 0.4)',
+    },
     maxWidth: {
              '1/4': '25%',
              '1/2': '50%',

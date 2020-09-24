@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Post, Like, Comment
@@ -7,51 +8,44 @@ from profiles.models import Profile
 from .forms import PostModelForm, CommentModelForm
 
 
-def home_page(request):
-    if request.user.is_authenticated:
-        return redirect('posts:main_post_list')
-    else:
-        return redirect('account_login')
 
+@login_required
 def post_comment_create_and_list_view(request):
-    if request.user.is_authenticated:
-        queryset = Post.objects.all()
-        profile = Profile.objects.get(user=request.user)
+    queryset = Post.objects.all_comments()
+    profile = Profile.objects.get(user=request.user)
 
-        #post form
-        post_form = PostModelForm()
-        if 'submit_p_form' in request.POST:
-            post_form = PostModelForm(request.POST or None, request.FILES or None)
-            if post_form.is_valid():
-                instance = post_form.save(commit=False)
-                instance.author = profile
-                instance.save()
-                post_form = PostModelForm()
-                messages.success(request, 'Post published')
-                return redirect('posts:main_post_list')
-        
-        #comment form
-        comment_form = CommentModelForm()
-        if 'submit_c_form' in request.POST:
-            comment_form = CommentModelForm(request.POST or None)
-            if comment_form.is_valid():
-                instance = comment_form.save(commit=False)
-                instance.user = profile
-                post_id = request.POST.get('post_id')
-                instance.post = Post.objects.get(id=post_id)
-                instance.save()
-                comment_form = CommentModelForm()
-                return redirect('posts:main_post_list')
+    #post form
+    post_form = PostModelForm()
+    if 'submit_p_form' in request.POST:
+        post_form = PostModelForm(request.POST or None, request.FILES or None)
+        if post_form.is_valid():
+            instance = post_form.save(commit=False)
+            instance.author = profile
+            instance.save()
+            post_form = PostModelForm()
+            messages.success(request, 'Post published')
+            return redirect('posts:main_post_list')
+    
+    #comment form
+    comment_form = CommentModelForm()
+    if 'submit_c_form' in request.POST:
+        comment_form = CommentModelForm(request.POST or None)
+        if comment_form.is_valid():
+            instance = comment_form.save(commit=False)
+            instance.user = profile
+            post_id = request.POST.get('post_id')
+            instance.post = Post.objects.get(id=post_id)
+            instance.save()
+            comment_form = CommentModelForm()
+            return redirect('posts:main_post_list')
 
-        context = {
-            'queryset': queryset,
-            'profile': profile,
-            'post_form': post_form,
-            'comment_form': comment_form,
-        }
-        return render(request, 'posts/main.html', context)
-    else:
-        return redirect('account_login')
+    context = {
+        'queryset': queryset,
+        'profile': profile,
+        'post_form': post_form,
+        'comment_form': comment_form,
+    }
+    return render(request, 'posts/main.html', context)
 
         
 '''

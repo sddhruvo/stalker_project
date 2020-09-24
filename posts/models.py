@@ -7,14 +7,23 @@ from django.dispatch import receiver
 from profiles.models import Profile
 
 
+class PostManager(models.Manager):
+    def all_comments(self):
+        comments = Post.objects.prefetch_related('author',"comment_posted__user")
+        return comments
+
+
+
 class Post(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    content = models.TextField()
+    content = models.TextField(db_index=True)
     image = models.ImageField(upload_to='posts', validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])], blank=True)
     likes = models.ManyToManyField(Profile, blank=True, related_name='profile_liked')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts')
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts', db_index=True)
+    
+    objects = PostManager()
 
     def __str__(self):
         return str(self.content[:20])
@@ -24,21 +33,24 @@ class Post(models.Model):
 
     # number of comments here
     def num_comments(self):
-        return self.comment_set.all().count()
+        return self.comment_posted.all().count()
 
+    
     class Meta:
         ordering = ('-created',)
 
 class Comment(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_posted')
     body = models.TextField(max_length=500)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.body[:20]}---{self.user}"
+
+    
 
 
 LIKE_CHOICES=(
