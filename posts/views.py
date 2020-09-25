@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.db.models import Prefetch
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Post, Like, Comment
@@ -12,9 +13,10 @@ from .forms import PostModelForm, CommentModelForm
 
 @login_required
 def post_comment_create_and_list_view(request):
-    profile = Profile.objects.select_related('user').get(user=request.user).get_all_friends_list()
+    profile=Profile.objects.select_related('user').get(user=request.user)
+    profile_list = Profile.get_all_friends_list(self=request.user)
     #profile contains list of the friends i have
-    queryset = Post.objects.all_posts().filter(Q(author__in=profile) | Q(author__id__exact=request.user.id))
+    queryset = Post.objects.all_posts(user_id=request.user.id, profile_list=profile_list)
     
 
     #post form

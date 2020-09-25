@@ -15,19 +15,19 @@ class Profile(models.Model):
         ('MALE', 'male'),
         ('FEMALE', 'female')
     ]
-    name = models.CharField(max_length=200, blank=True)
+    name = models.CharField(max_length=200, blank=True, db_index=True)
     id = models.UUIDField(primary_key=True, editable=False)
     bio = models.TextField(default='No bio data', max_length=400)
     user = models.OneToOneField(User, on_delete = models.CASCADE, related_name='profile')
     gender = models.CharField(max_length=6, choices=GENDER, default='NONE')
-    country = CountryField()
+    country = CountryField(blank=True)
     avatar = models.ImageField(default='avatars/avatar.png', upload_to='media/avatars/')
     friends = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True, related_name='friends')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     favourite = models.CharField(max_length=300, blank=True)
     slug = models.SlugField(unique=True,blank=True)
-    def __str__(self):
+    def __unicode__(self):
         return self.user.username
     
     def save(self, *args, **kwargs):
@@ -39,11 +39,10 @@ class Profile(models.Model):
         return self.friends.all()
 
     def get_all_friends_list(self):
-        friend_list= []
-        for friend in self.friends.all():
-            friend_list.append(friend.profile)
-        print(type(friend_list))
-        return friend_list
+        
+        
+        friends_list = self.friends.all().values_list('id',flat=True)
+        return friends_list
 
     def get_absolute_url(self):
         """Get url for profile's detail view.
