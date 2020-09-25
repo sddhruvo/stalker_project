@@ -23,6 +23,7 @@
                 <button type='submit' name="submit_p_form" class="btn-green">Send</button>
             </form>
           </div>
+          
           {% for obj in queryset %}
             <div class="sm:col-span-2 grid justify-center">
                 <div class="sm:ml-10 card border border-teal-500 py-6 shadow-mdgreen">
@@ -36,7 +37,21 @@
                     {% endif %}
                     <div class="p-4 text-gray-400 text-3xl"> <p> {{ obj.content }} </p></div>
                     <div class="like-comment bg-gray-900 border border-gray-900 border-r-0 border-l-0 flex justify-evenly">
-                        <button>Like</button>
+                        <div>
+                            <form action="{% url 'posts:like_post_list' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="post_id" value={{obj.id}}>
+                                {% if profile not in obj.likes.all %}
+                                    <button type="submit" class="ui bwhite-sm button">LIKE
+                                    </button>
+                                    <span> {{obj.num_likes}} likes</span>
+                                {% else %}
+                                    <button type="submit" class="ui bwhite-sm button">UNLIKE
+                                    </button>
+                                    <span> {{obj.num_likes}} like{{ obj.num_likes|pluralize }}</span>
+                                {% endif %}
+                            </form>
+                        </div>
                         <button>Comment</button>
                     </div>
                     <div class="h-auto p-4">
@@ -87,6 +102,7 @@
                     </div>
                 </div>
             {% endfor %}
+            
           </div>
         </div>
       </div>

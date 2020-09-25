@@ -38,6 +38,13 @@ class Profile(models.Model):
     def get_all_friends(self):
         return self.friends.all()
 
+    def get_all_friends_list(self):
+        friend_list= []
+        for friend in self.friends.all():
+            friend_list.append(friend.profile)
+        print(type(friend_list))
+        return friend_list
+
     def get_absolute_url(self):
         """Get url for profile's detail view.
 

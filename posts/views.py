@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Post, Like, Comment
@@ -11,8 +12,10 @@ from .forms import PostModelForm, CommentModelForm
 
 @login_required
 def post_comment_create_and_list_view(request):
-    queryset = Post.objects.all_comments()
-    profile = Profile.objects.get(user=request.user)
+    profile = Profile.objects.select_related('user').get(user=request.user).get_all_friends_list()
+    #profile contains list of the friends i have
+    queryset = Post.objects.all_posts().filter(Q(author__in=profile) | Q(author__id__exact=request.user.id))
+    
 
     #post form
     post_form = PostModelForm()
@@ -48,34 +51,43 @@ def post_comment_create_and_list_view(request):
     return render(request, 'posts/main.html', context)
 
         
-'''
+
 def like_unlike_post(request):
     user = request.user
+    print(user)
     if request.method == 'POST':
         post_id = request.POST.get('post_id')
         post_obj = Post.objects.get(id=post_id)
+        print(post_obj)
         profile = Profile.objects.get(user=user)
+        print(profile)
 
-        if profile in post_obj.liked.all():
-            post_obj.liked.remove(profile)
+        if profile in post_obj.likes.all():
+            print(1)
+            post_obj.likes.remove(profile)
         else:
-            post_obj.liked.add(profile)
+            print(2)
+            post_obj.likes.add(profile)
 
         like, created = Like.objects.get_or_create(user=profile, post_id=post_id)
 
         if not created:
+            print(3)
             if like.value=='LIKE':
+                print(4)
                 like.value='UNLIKE'
             else:
+                print(5)
                 like.value='LIKE'
         else:
+            print(6)
             like.value='LIKE'
 
             post_obj.save()
             like.save()
 
     return redirect('posts:main_post_list')
-'''
+
 
 class PostDeleteView(DeleteView):
     model = Post

@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.core.cache import cache
 from django.db.models.signals import post_save
 from django.db.models import Q
 from django.dispatch import receiver
@@ -8,14 +9,16 @@ from profiles.models import Profile
 
 
 class PostManager(models.Manager):
-    def all_comments(self):
-        comments = Post.objects.prefetch_related('author',"comment_posted__user")
-        return comments
+    def all_posts(self):
+        posts = Post.objects.prefetch_related('author',"comment_posted__user",
+            "comment_posted__user__user",'likes')
+            
+        return posts
 
 
 
 class Post(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, db_index=True)
     content = models.TextField(db_index=True)
     image = models.ImageField(upload_to='posts', validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])], blank=True)
     likes = models.ManyToManyField(Profile, blank=True, related_name='profile_liked')
@@ -67,7 +70,7 @@ class Like(models.Model):
     def __str__(self):
         return f"{self.user}---{self.post}---{self.value}"
 
-
+'''
 # signal to create like counter
 @receiver(post_save, sender=Like)
 def like_unlike_post(sender, instance, created, **kwargs):
@@ -81,7 +84,7 @@ def like_unlike_post(sender, instance, created, **kwargs):
         post_.likes.remove(profile_.user)
         instance.delete()
         post_.save()
-
+'''
 
 
 
