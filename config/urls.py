@@ -17,6 +17,7 @@ urlpatterns = [
     path("relationships/", include("relationships.urls", namespace="relationships")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path('search/', include('haystack.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

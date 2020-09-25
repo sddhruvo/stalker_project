@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+     {% for result in page.object_list %}
+               {{ result.object.name }}
+          
+          {% empty %}           
+               No results found.
+          {% endfor %}
+{% endblock content %}
