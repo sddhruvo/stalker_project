@@ -40,6 +40,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
             receiver = sender_profile
         )
         context['form'] = CommentModelForm()
+        context['profile'] = profile=Profile.objects.get(user=self.request.user)
         return context
     
 

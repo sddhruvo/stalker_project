@@ -33,7 +33,7 @@ class Profile(models.Model):
     slug = models.SlugField(unique=True,blank=True)
 
     
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
     
     def save(self, *args, **kwargs):

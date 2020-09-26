@@ -29,7 +29,7 @@ class Post(models.Model):
     
     objects = PostManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.content[:20])
 
     def num_likes(self):
