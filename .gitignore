@@ -267,6 +267,15 @@ tags
 ### Project template
 
 stalker_project/media/
+stalker_project/static/tailwind/tailwind.config.js
+stalker_project/static/tailwind/src/
+stalker_project/static/tailwind/static/
+stalker_project/static/tailwind/styles.css
+stalker_project/static/tailwind/package.json
+stalker_project/static/tailwind/package-lock.json
+config/settings/local.py 
+config/settings/production.py 
+
 
 .pytest_cache/
 
