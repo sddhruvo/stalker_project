@@ -9,7 +9,8 @@ class User(AbstractUser):
     """Default user for stalker_project."""
 
     #: First and last name do not cover name patterns around the globe
-    name = CharField(_("Name of User"), blank=True, max_length=255)
+    first_name = CharField(max_length=128, null=True, blank=False)
+    last_name = CharField(max_length=128, null=True)
     id = UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     

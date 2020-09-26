@@ -13,20 +13,27 @@
         }
     }
 </style>
-<div class="ui grid container">
+<div class="">
     <div class="container md:ml-20">
         <div class="grid sm:grid-cols-3 gap-12 mx-10 mt-12">
           <div class="sm:col-span-1 card sticky-post" id="post-area">
-            <form action="" method="POST" class='ui form' enctype="multipart/form-data">
-                {% csrf_token %}
-                {{post_form|crispy }}
-                <button type='submit' name="submit_p_form" class="btn-green">Send</button>
-            </form>
+                <div>
+                    <form id="demo-2" class="" action="/search" method="get">
+                        <input type="search" name="q" placeholder="Search">
+                    </form>
+                </div>
+                <div class="mt-4">
+                    <form action="" method="POST" class='ui form' enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{post_form|crispy }}
+                        <button type='submit' name="submit_p_form" class="btn-green">Send</button>
+                    </form>
+                </div>
           </div>
           
           {% for obj in queryset %}
             <div class="sm:col-span-2 grid justify-center">
-                <div class="sm:ml-10 card border border-teal-500 py-6 shadow-mdgreen">
+                <div class="sm:ml-10 card border border-teal-500 py-12 shadow-mdgreen">
                     <div class="grid grid-cols-12 justify-self-stretch">
                         <img class=" ml-4 col-span-1 inline-block h-20 w-20 rounded-full text-white shadow-solid flex-col" src={{obj.author.avatar.url}} alt="pp">
                         <a href="{{ obj.author.user.profile.get_absolute_url }}" class="mx-6 text-teal-500 col-span-9 text-3xl grid items-center col-span-1">{{ obj.author.user.profile.name }}</a>

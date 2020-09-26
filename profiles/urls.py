@@ -1,5 +1,5 @@
 from django.urls import path
-
+from django.views.decorators.http import require_POST
 from profiles.views import (
     profile_detail_view,
     profile_redirect_view,

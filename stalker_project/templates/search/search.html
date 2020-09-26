@@ -1,10 +1,29 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-     {% for result in page.object_list %}
-               {{ result.object.name }}
-          
-          {% empty %}           
-               No results found.
+<div>
+     <div class="grid sm:grid-cols-4 gap-8 px-10 h-auto">
+          {% for result in page.object_list %}
+               <div class="col-span-1 flex items-center gap-8 border border-teal-500 shadow-mdgreen ">
+                    <img class=" ml-4 inline-block h-20 w-20 rounded-full text-white shadow-solid flex-col" src="{{ result.object.avatar.url }} " alt="">
+                    <a href="{{ result.object.get_absolute_url }}"><h2 class="text-teal-300 hover:text-shadow-xl text-5xl ">
+                         {% if result.object.name %}{{ result.object.name }}
+                         {% else %}{{ result.object.slug }}
+                         {% endif %}
+                    </h2></a>
+               </div>
+               
+                         
+          {% empty %}
+               <div class="col-span-1 border border-teal-500 shadow-mdgreen p-6">
+                    No results found. search agaain?
+                    <form id="demo-2" class="" action="/search" method="get">
+                         <input type="search" name="q" placeholder="Search">
+                     </form>
+               </div>
           {% endfor %}
+     </div>
+</div>
 {% endblock content %}
+
+

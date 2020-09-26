@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.db.models import Prefetch
@@ -13,7 +14,7 @@ from .forms import PostModelForm, CommentModelForm
 
 @login_required
 def post_comment_create_and_list_view(request):
-    profile=Profile.objects.select_related('user').get(user=request.user)
+    profile=Profile.objects.get(user=request.user)
     profile_list = Profile.get_all_friends_list(self=request.user)
     #profile contains list of the friends i have
     queryset = Post.objects.all_posts(user_id=request.user.id, profile_list=profile_list)
@@ -88,7 +89,7 @@ def like_unlike_post(request):
             post_obj.save()
             like.save()
 
-    return redirect('posts:main_post_list')
+    return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
 
 class PostDeleteView(DeleteView):

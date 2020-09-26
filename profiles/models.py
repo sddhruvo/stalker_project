@@ -9,6 +9,10 @@ from django.template.defaultfilters import slugify
 
 User = settings.AUTH_USER_MODEL
 
+
+
+
+
 class Profile(models.Model):
     GENDER = [
         ('NONE', 'none'),
@@ -27,6 +31,8 @@ class Profile(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     favourite = models.CharField(max_length=300, blank=True)
     slug = models.SlugField(unique=True,blank=True)
+
+    
     def __unicode__(self):
         return self.user.username
     
@@ -37,6 +43,10 @@ class Profile(models.Model):
 
     def get_all_friends(self):
         return self.friends.all()
+
+    def get_all_posts(self):
+        return self.posts.all()
+
 
     def get_all_friends_list(self):
         

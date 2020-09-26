@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% load static %}
 
 {% block title %}User: {{ object.username }}{% endblock %}
@@ -6,9 +7,9 @@
 {% block content %}
 <div class="container mt-12">
 
-  <div class="grid grid-rows-3 grid-flow-col gap-4 mx-10 sm:mx-14 sm:grid-rows-3 sm:grid-cols-4 sm:gap-8">
+  <div class="grid sm:grid-cols-3 gap-12 ml-10 mt-12">
     <!-- profile details -->
-    <div class="col-span-2 sm:row-span-3 sm:col-span-1">
+    <div class="sm:col-span-1 ">
       <div>
         <div class="row-span-2 ">
           <h1 class="text-3xl bg-cover">{{object.name}}</h1>
@@ -27,7 +28,7 @@
                 </tr>
                 <tr>
                     <td>country:</td>
-                    <td>{{object.get_friends_no}}</td>
+                    <td>{{object.country.name}}</td>
                 </tr>
                 <tr>
                     <td>gender:</td>
@@ -43,9 +44,9 @@
       </div>
     </div>
     <!-- info update section -->
-    <div class="col-span-3 sm:row-span-1 sm:col-span-3 pt-2 sm:flex sm:items-end sm:flex-col">
+    <div class="sm:col-span-2 grid justify-center mx-10 sm:ml-32 sm:p-20">
       <div class="">
-        <div class="">
+        <div class=" m-4 flex justify-end">
           
           {% if object.id != request.user.id %}
             {% if frnd_btn_state == 'ACCEPTED' %}
@@ -61,7 +62,7 @@
     
       {% if object.id == request.user.id %}
       <!-- Action buttons -->
-      <div class="">
+      <div class="flex justify-end">
     
         <div class="">
           <a class="btn-green" href="{% url 'profiles:update' %}" role="button">My Info</a>
@@ -91,8 +92,90 @@
       {%endif%}
       <!-- End Action buttons -->
       {% endif %}
-    </div>
-    <div class="col-span-3 bg-gray-200 sm:row-span-2 sm:col-span-3">3</div>
+    
+        <div class="">
+          {% for obj in object.get_all_posts %}
+                <div class="">
+                    <div class=" border border-teal-500 shadow-mdgreen py-12">
+                        <div class="grid grid-cols-12 justify-self-stretch">
+                            <img class=" ml-4 col-span-1 inline-block h-20 w-20 rounded-full text-white shadow-solid flex-col" src={{obj.author.avatar.url}} alt="pp">
+                            <a href="{{ obj.author.user.profile.get_absolute_url }}" class="mx-6 text-teal-500 col-span-9 text-3xl grid items-center col-span-1">{{ obj.author.user.profile.name }}</a>
+                            <small class="mr-6 col-span-1 grid items-center">{{obj.created|timesince }}</small>    
+                        </div>
+                        {% if obj.image %}
+                            <img class="mt-6" src={{obj.image.url}} class=" h-auto">
+                        {% endif %}
+                        <div class="p-4 text-gray-400 text-3xl"> <p> {{ obj.content }} </p></div>
+                        <div class="like-comment bg-gray-900 border border-gray-900 border-r-0 border-l-0 flex justify-evenly">
+                            <div>
+                                <form action="{% url 'posts:like_post_list' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="post_id" value={{obj.id}}>
+                                    {% if profile not in obj.likes.all %}
+                                        <button type="submit" class="ui bwhite-sm button">LIKE
+                                        </button>
+                                        <span> {{obj.num_likes}} likes</span>
+                                    {% else %}
+                                        <button type="submit" class="ui bwhite-sm button">UNLIKE
+                                        </button>
+                                        <span> {{obj.num_likes}} like{{ obj.num_likes|pluralize }}</span>
+                                    {% endif %}
+                                </form>
+                            </div>
+                            <button>Comment</button>
+                        </div>
+                        <div class="h-auto p-4">
+                            <form action="#" method="POST"class='grid grid-cols-4 gap-4'>
+                                {% csrf_token %}
+                                <input type="hidden" name="post_id" value={{obj.id}}>
+                                <div class="col-span-3">
+                                    {{ form|crispy }}
+                                </div>
+                                <button type="submit" name="submit_c_form" class="btn-green col-span-1 h-20">Send</button>
+                            </form>
+                        </div>
+                        <div class="comment-expand">
+                            {% if obj.comment_posted.all %}
+                                {% with all_comments=obj.comment_posted.all %}
+                                    {% for c in all_comments %}
+                                    
+                                        <div class="comment px-4 grid grid-cols-4 gap-20 items-center break-words">
+                                            <div class="col-span-1 flex items-center">
+                                                <img class=" ml-4 inline-block h-20 w-20 rounded-full text-white shadow-solid flex-col" src={{c.user.avatar.url}}>
+                                                <span class="author col-span-1">{{ c.user.name }}</span>
+                                            </div>
+                                            <div class='mt-8 col-span-3'>{{ c.body }}</div>
+                                            <!--
+                                            {% if request.user.id == c.user.id %}
+                                                <div class="comment-delete-edit"></div>
+                                                    <button class="ui button p-2 large">
+                                                        <a href="{% url 'posts:comment_update' c.pk %}">
+                                                            <i class="edit icon gray"></i>
+                                                            
+                                                        </a>
+                                                        <div class="hide">edit</div>
+                                                    </button>
+                                                    <button class="ui button p-2 large">
+                                                        <a href="{% url 'posts:comment_delete' c.pk %}">
+                                                            <i class="trash icon gray"></i>
+                                                            
+                                                        </a>
+                                                        <div class="hide">delete</div>
+                                                    </button>
+                                                </div>
+                                            {% endif %}-->
+                                        </div>
+                                    
+                                    {% endfor %}
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+          {% if queryset %} asdf {% endif %}
+        </div>
+      </div>
+      
   </div>
   <style>
     

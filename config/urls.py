@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
+from haystack.views import basic_search 
 from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
@@ -17,7 +19,7 @@ urlpatterns = [
     path("relationships/", include("relationships.urls", namespace="relationships")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path('search/', include('haystack.urls')),
+    path('search/', login_required(basic_search), name='basic_search'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

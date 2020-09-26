@@ -64,7 +64,7 @@ input::-webkit-input-placeholder {
 
 /* Demo 2 */
 #demo-2 input[type=search] {
-	width: 15px;
+	width: 38px;
 	padding-left: 10px;
 	color: transparent;
 	cursor: pointer;
@@ -73,7 +73,7 @@ input::-webkit-input-placeholder {
 	background-color: #fff;
 }
 #demo-2 input[type=search]:focus {
-	width: 130px;
+	width: 280px;
 	padding-left: 32px;
 	color: #000;
 	background-color: #fff;

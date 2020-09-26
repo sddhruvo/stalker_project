@@ -99,7 +99,7 @@
         </div>
       </header>
       <main>
-        <div class="container pt-20">
+        <div class="pt-40">
 
           {% if messages %}
               {% for message in messages %}
@@ -107,9 +107,7 @@
               {% endfor %}
           {% endif %}
 
-          <form id="demo-2" class="" action="/search" method="get">
-            <input type="search" name="q" placeholder="Search">
-          </form>
+          
     
           {% block content %}
            
